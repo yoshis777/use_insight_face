@@ -47,7 +47,7 @@ class Recognizer:
         self.face_analysis = insightface.app.FaceAnalysis()
         self.face_analysis.prepare(ctx_id=0, det_size=(640, 640))
 
-    def analysis_face(self, target_image_path):
+    def analysis_face(self, target_image_path, only_one_face=False):
         image = read_image(target_image_path)
         faces = self.face_analysis.get(image)
 
@@ -55,6 +55,9 @@ class Recognizer:
             return face.embedding
         embedded_faces = list(map(embed_face, faces))
         if not embedded_faces:
+            return None
+        if only_one_face and not len(embedded_faces) == 1:
+            # 分類済の画像内で顔が複数検知される場合、別人物の画像を認証する可能性があるため省く
             return None
         return embedded_faces
 
@@ -64,7 +67,7 @@ class Recognizer:
                             :int(os.environ['PROCESSING_NUM'])]
         pprint.pprint(unknown_images)
 
-        known_faces = list(map(self.analysis_face, known_images))
+        known_faces = list(map(self.analysis_face, known_images, [True] * len(unknown_images)))
 
         for unknown_image in unknown_images:
             unknown_face = self.analysis_face(unknown_image)
