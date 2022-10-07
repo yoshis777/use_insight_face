@@ -62,12 +62,14 @@ class Recognizer:
         return embedded_faces
 
     def compare(self):
-        known_images = File.get_filenames_containing_subdir(os.path.join(os.environ['SORTED_FOLDER']))
-        unknown_images = File.get_filenames(os.path.join(os.environ['UNKNOWN_FOLDER'], os.environ['TARGET_EXT']))[
+        known_images = File.get_filenames(os.path.join(os.environ['SORTED_FOLDER']), True)
+        unknown_images = File.get_filenames(os.path.join(os.environ['UNKNOWN_FOLDER']))[
                             :int(os.environ['PROCESSING_NUM'])]
+        true_list = [True] * len(known_images)
         pprint.pprint(unknown_images)
 
-        known_faces = list(map(self.analysis_face, known_images, [True] * len(unknown_images)))
+        print('Detecting faces in images...')
+        known_faces = list(map(self.analysis_face, known_images, true_list))
 
         for unknown_image in unknown_images:
             unknown_face = self.analysis_face(unknown_image)

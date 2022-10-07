@@ -9,13 +9,13 @@ class File:
         pass
 
     @classmethod
-    def get_filenames(cls, target_path):
-        return glob.glob(target_path)
-
-    @classmethod
-    def get_filenames_containing_subdir(cls, target_dir_path):
+    def get_filenames(cls, target_dir_path, contain_subdir=False):
         p_temp = pathlib.Path(target_dir_path)
-        return list(p_temp.glob('**/' + os.environ['TARGET_EXT']))
+        extensions = os.environ['TARGET_EXT'].split('|')
+        target_glob = '*.*'
+        if contain_subdir:
+            target_glob = '**/' + target_glob
+        return [i for i in p_temp.glob(target_glob) if i.suffix in extensions]
 
     @classmethod
     def get_containing_dirname(cls, target_file_path):
@@ -32,15 +32,13 @@ class File:
         print(message + ': ' + str(target_filepath))
 
     @classmethod
-    def count_files(cls, target_dir_path):
-        p_temp = pathlib.Path(target_dir_path)
-
-        return len(list(p_temp.glob('**/' + os.environ['TARGET_EXT'])))
+    def count_files(cls, target_dir_path, contain_subdir=False):
+        return len(cls.get_filenames(target_dir_path, contain_subdir))
 
     @classmethod
     def count_files_in_dest_folder(cls):
-        dest_dir_files_count = cls.count_files(os.environ['SORTED_FOLDER']) +\
-            cls.count_files(os.environ['UNIDENTIFIED_FOLDER']) +\
-            cls.count_files(os.environ['THRESHOLD_FOLDER'])
+        dest_dir_files_count = cls.count_files(os.environ['SORTED_FOLDER'], True) +\
+            cls.count_files(os.environ['UNIDENTIFIED_FOLDER'], True) +\
+            cls.count_files(os.environ['THRESHOLD_FOLDER'], True)
 
         return dest_dir_files_count
