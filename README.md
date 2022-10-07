@@ -40,9 +40,10 @@ THRESHOLD=0.5(顔判別をどれだけ厳しくするか。大きいほど厳し
 python main.py
 ```
 ### 実行結果
-* ok: 認識成功（判定した人物、類似率）
-* out of threshold: 類似率が小さく、sortedに含まれる人物たちとは別人と判定
-* cannot find faces in: 人物の顔が１つもない、あるいは認識できない
+* 凡例
+  * ok: 認識成功（判定した人物、類似率）
+  * out of threshold: 類似率が小さく、sortedに含まれる人物たちとは別人と判定
+  * cannot find faces in: 人物の顔が１つもない、あるいは認識できない
 ```
 対象フォルダ格納ファイル数: 58
 移動前ファイル数: 0
